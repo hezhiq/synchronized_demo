@@ -7,18 +7,22 @@ public class RightWayStopThreadInProd implements Runnable{
     @Override
     public void run() {
         while (true){
-            System.out.println("go");
-            try {
-                throwInMethod();
-            } catch (InterruptedException e) {
-                System.out.println("run() 方法中的异常只能try/catch,不能throw");
-                e.printStackTrace();
+            if(Thread.currentThread().isInterrupted()){
+                System.out.println("程序中断");
+                break;
             }
+            System.out.println("go");
+            throwInMethod();
         }
     }
 
-    private void throwInMethod() throws InterruptedException {
-        Thread.sleep(2000);
+    private void throwInMethod() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
     }
     
     public static void main(String[] args) throws InterruptedException {
